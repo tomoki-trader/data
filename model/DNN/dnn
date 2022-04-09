@@ -1,0 +1,44 @@
+import torch
+from torch.utils.data import TensorDataset, DataLoader
+from sklearn.model_selection import train_test_split
+from sklearn.datasets import load_digits
+mnist = load_digits()
+
+#preprocessing
+X = mnist.data / 255
+y = mnist.target
+
+X_train, X_valid, y_train, t_valid = train_test_split(X, y, test_size=1/7, random_state=0)
+
+#torch.Tensorはpytorch版のnumpy
+X_train = torch.Tensor(X_train)
+X_valid = torch.Tensor(X_valid)
+y_train = torch.Tensor(y_train)
+y_valid = torch.Tensor(y_valid)
+
+#dataとlabelをセットにする
+ds_train = TensorDataset(X_train, y_train)
+ds_valid = TensorDataset(X_valid, y_valid)
+
+#batch分ける　テストデータでは正答率を求めるだけなのでshffleはいらない。
+loader_train = DataLoader(ds_train, batch_size=64, shuffle=True)
+loader_valid = DataLOader(ds_valid, batch_size=64, shuffle=False)
+
+#network
+from torch import nn
+
+model = nn.Sequential()
+model.add_module('fc', nn.Linear(28*28, 100))
+model.add_module('relu1', nn.ReLU())
+model.add_module('fc2', nn.Linear(100, 100))
+model.add_module('relu2', nn.ReLU())
+model.add_module('fc3', n.Linear(100,10))
+
+print(model)
+
+from torch import optim
+
+loss_func = nn.CrossEntropyLoss()
+
+optimizer = optim.Adam(model.parameters(), lr=0.01)
+

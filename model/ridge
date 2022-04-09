@@ -1,0 +1,44 @@
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import LinearRegression, Ridge, Lasso
+from sklearn.datasets import load_boston
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler
+import warnings
+
+
+#bostonをインスタンス
+with warnings.catch_warnings():
+    warnings.filterwarnings("ignore")
+    X, y = load_boston(return_X_y=True)
+
+X = StandardScaler().fit_transform(X)
+clf1 = LinearRegression().fit(X, y)
+clf2 = Ridge(alpha=10).fit(X, y)
+clf3 = Ridge(alpha=100).fit(X, y)
+
+plt.plot(clf1.coef_, label='alpha=0', color='r', linestyle=':')
+plt.plot(clf2.coef_, label='alpha=10', color='g', linestyle='-.')
+plt.plot(clf3.coef_, label='alpha=100', color='b', linestyle='--')
+plt.xlabel('Features', fontsize=12)
+plt.ylabel('Coefficient', fontsize=12)
+plt.legend()
+plt.savefig('ridge.png')
+class Ridge2:
+    def __init__(self, alpha=1):
+        self.w_ = None
+        self.alpha = alpha
+    
+    def fit(self, X, y):
+        X = np.insert(X, 0, 1, axis=1)
+        I = np.eye(X.shape[1])
+        self.w_ = np.linalg.inv(X.T @ X + self.alpha*I) @ X.T @ y
+    
+    def predict(self, X):
+        X = np.insert(X, 0, 1, axis=1)
+        return X @self.w_
+
+#clf4 = Ridge2(alpha=10)
+#clf4.fit(X, y)
+#coef_df = pd.DataFrame()

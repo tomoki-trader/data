@@ -1,0 +1,13 @@
+from sklearn.preprocessing import StandardScaler
+data = [[0,0],[0,0],[1,1],[1,1]]
+#instanceか
+scaler = StandardScaler()
+print(scaler)
+
+#標準偏差と平均の計算
+scaler.fit(data)
+print(scaler.mean_)
+
+#変換
+print(scaler.transform(data))
+

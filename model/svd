@@ -1,0 +1,38 @@
+import os
+from matplotlib.cbook import ls_mapper 
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+import matplotlib
+X = np.array([[1, 2],
+              [2, 4],
+              [3, 6],
+              [4, 8]], dtype=float)
+    
+n, p = X.shape
+
+std = StandardScaler()
+X_std = std.fit_transform(X)
+
+cov = X_std.T @ X_std / (n-1)
+W, V_pca = np.linalg.eig(cov)
+index = W.argsort()[::-1]
+W = W[index]
+V_pca = V_pca[:, index]
+
+#full_metrics=Trueで正方行列にしている
+U, s, V_svd = np.linalg.svd(X_std, full_matrices=True)
+V_svd = V_svd.T
+S = np.zeros((n,p))
+#making diagonal matrix
+S[:p, :p] = np.diag(s)
+
+X_pca = X_std @ V_pca[:,:2]
+X_svd = X_std @ V_svd[:,:2]
+
+#完全な相関があるとき
+plt.scatter(X_std[:, 0], X_std[:, 1], color='red')
+plt.scatter(X_pca[:, 0], X_pca[:, 1], marker='+', color='blue')
+plt.scatter(X_svd[:, 0], X_svd[:, 1],marker='o', color='green' )
+plt.savefig('correlation.png')
+
